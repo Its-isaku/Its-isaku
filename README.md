@@ -1,5 +1,5 @@
 # 💫 About Me:
-Software Engineer student in UABC(Universidad Autonoma de Baja Clifornia)<br>Salon 544
+Software Engineer student in UABC(Universidad Autonoma de Baja California)<br>
 
 
 ## 🌐 Socials:
