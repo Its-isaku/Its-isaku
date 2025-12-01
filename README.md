@@ -45,20 +45,20 @@ These are the technologies and tools I work with to bring ideas to life.
 
 ---
 
-### 📈 GitHub Stats
+### ⚡ My GitHub Activity
 
-You can showcase your coding activity and language breakdown dynamically.
+Showcasing my recent activity and contribution history.
 
 <div align="center">
-  
-  [![GitHub Streak](https://github-readme-streak-stats.herokuapp.com?user=Its-isaku&theme=dark&hide_border=true&date_format=M%20j%5B%2C%20Y%5D)](https://git.io/streak-stats)
-  
-  <br>
-  
-  [![Your GitHub Stats](https://github-readme-stats.vercel.app/api?username=Its-isaku&show_icons=true&theme=dark&line_height=27&hide_border=true&count_private=true)](https://github.com/anuraghazra/github-readme-stats)
-  
-  [![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=Its-isaku&layout=compact&theme=dark&hide_border=true)](https://github.com/anuraghazra/github-readme-stats)
 
+  <img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=Its-isaku&theme=dark" alt="Its-isaku GitHub Profile Summary"/>
+  
 </div>
 
 ---
+
+<div align="center">
+
+  <img src="https://activity-graph.vercel.app/graph?username=Its-isaku&theme=react-dark" alt="Isai Almeraz Activity Graph"/>
+
+</div>
