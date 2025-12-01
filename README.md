@@ -41,13 +41,3 @@ These are the technologies and tools I work with to bring ideas to life.
   * **Frameworks/Libraries:** Django, React, Flask
   * **Tools/Design:** Figma, Git
 </details>
-
----
-
-### My GitHub Activity
-
-<div align="center">
-
-  <img src="https://activity-graph.vercel.app/graph?username=Its-isaku&theme=react-dark" alt="Isai Almeraz Activity Graph"/>
-
-</div>
