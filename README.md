@@ -19,10 +19,9 @@
 
 I am a **Full Stack Web Developer** and a dedicated **Problem Solver**. Currently, I am studying at **Universidad Autónoma de Baja California** and focused on **Building Seamless User Experiences With Code**.
 
--   🔭 I’m currently building: **[Briefly mention a current project or area of study, e.g., A mobile application using Swift/SwiftUI]**
--   🌱 I’m always learning: New features in **React, Swift, and DevOps** principles.
--   💬 Ask me about: **JavaScript, Swift, Python**, or modern web & Mobile architecture.
--   📫 How to reach me: Connect with me on [LinkedIn](https://www.linkedin.com/in/isai-almeraz-153096330/) or send an [email](mailto:Isaialmeraz2003@gmail.com)!
+* 🌱 I’m always learning: New features in **React, Swift, and DevOps** principles.
+* 💬 Ask me about: **JavaScript, Swift, Python**, or modern web & Mobile architecture.
+* 📫 How to reach me: Connect with me on [LinkedIn](https://www.linkedin.com/in/isai-almeraz-153096330/) or send an [email](mailto:Isaialmeraz2003@gmail.com)!
 
 ---
 
@@ -46,16 +45,6 @@ These are the technologies and tools I work with to bring ideas to life.
 ---
 
 ### ⚡ My GitHub Activity
-
-Showcasing my recent activity and contribution history.
-
-<div align="center">
-
-  <img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=Its-isaku&theme=dark" alt="Its-isaku GitHub Profile Summary"/>
-  
-</div>
-
----
 
 <div align="center">
 
