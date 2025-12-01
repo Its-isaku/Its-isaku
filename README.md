@@ -15,7 +15,7 @@
 
 ---
 
-### 🎓 About Me
+### About Me
 
 I am a **Full Stack Web Developer** and a dedicated **Problem Solver**. Currently, I am studying at **Universidad Autónoma de Baja California** and focused on **Building Seamless User Experiences With Code**.
 
@@ -25,7 +25,7 @@ I am a **Full Stack Web Developer** and a dedicated **Problem Solver**. Currentl
 
 ---
 
-### 💻 Tech Stack & Tools
+### Tech Stack & Tools
 
 These are the technologies and tools I work with to bring ideas to life.
 
@@ -44,7 +44,7 @@ These are the technologies and tools I work with to bring ideas to life.
 
 ---
 
-### ⚡ My GitHub Activity
+### My GitHub Activity
 
 <div align="center">
 
