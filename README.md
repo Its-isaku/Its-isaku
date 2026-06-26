@@ -2,14 +2,15 @@
 
 ![Isai Almeraz](./assets/header.svg)
 
-[![Portfolio](https://img.shields.io/badge/Portfolio-almerazisai.com-808000?style=flat-square&logo=safari&logoColor=white)](https://almerazisai.com)
-[![mndwrk](https://img.shields.io/badge/mndwrk-studio-a371f7?style=flat-square&logo=rocket&logoColor=white)](https://mndwrk.co)
-[![LinkedIn](https://img.shields.io/badge/-LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/isai-almeraz)
-[![Instagram](https://img.shields.io/badge/-Instagram-E4405F?style=flat-square&logo=instagram&logoColor=white)](https://www.instagram.com/928_calls/)
-[![YouTube](https://img.shields.io/badge/-YouTube-FF0000?style=flat-square&logo=youtube&logoColor=white)](https://www.youtube.com/@isaialmeraz4941)
-[![Email](https://img.shields.io/badge/-Email-D14836?style=flat-square&logo=gmail&logoColor=white)](mailto:contact@almerazisai.com)
+[![Portfolio](https://img.shields.io/badge/Portfolio-556b00?style=for-the-badge&logo=safari&logoColor=b3c63f)](https://almerazisai.com)
+[![mndwrk](https://img.shields.io/badge/mndwrk_studio-1a1a1a?style=for-the-badge&logo=rocket&logoColor=a371f7)](https://mndwrk.co)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/isai-almeraz)
+[![Instagram](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/928_calls/)
+[![YouTube](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@isaialmeraz4941)
 
-<sub>🌱 Currently going deep on <b>system design</b> &amp; <b>DevOps</b></sub>
+<br>
+
+`🌱 going deep on system design & DevOps`  ·  `📩 contact@almerazisai.com`
 
 </div>
 
@@ -31,11 +32,8 @@ iOS + full-stack dev. I ship products, not just commits.
 <summary>👨‍💻 I'm a developer</summary>
 <br>
 
-Reach for: `Swift / SwiftUI` · `React` · `Python` · `Supabase`.
 I build design systems that don't look templated. Co-founder of [mndwrk](https://mndwrk.co)
-alongside [Sofía Pérez](https://perezalmaraz.com).
-
-**Currently leveling up:** system design & DevOps.
+alongside [Sofía Pérez](https://perezalmaraz.com). Currently leveling up: system design & DevOps.
 
 </details>
 
@@ -50,26 +48,61 @@ Always down to talk product + design.
 
 ---
 
-### 📌 Featured
+### 🛠️ Stack
 
-| Project | What it does | Stack | Live |
-|---|---|---|---|
-| **SOKIO** | Gym management & admin system | SwiftUI · Supabase | [sokio.app](https://sokio.app) |
-| **mndwrk** | Software studio — product + design | — | [mndwrk.co](https://mndwrk.co) |
-| **BrewPass** | _In progress_ | Swift | soon |
+<p align="center">
+  <img src="https://skillicons.dev/icons?i=swift,react,py,django,flask,supabase,figma,git&theme=dark" />
+</p>
 
 ---
 
-### 🛠️ Stack
+### 📌 Featured
 
-`Swift / SwiftUI` · `React` · `Python` · `Django / Flask` · `Supabase` · `Git` · `Figma`
+<table>
+  <tr>
+    <td width="50%" valign="top">
+
+#### 🏋️ [SOKIO](https://sokio.app)
+Gym management & admin system.
+`SwiftUI` · `Supabase`
+
+  </td>
+    <td width="50%" valign="top">
+
+#### 🧱 [mndwrk](https://mndwrk.co)
+Software studio — product + design.
+`Studio`
+
+  </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+
+#### 🍺 BrewPass
+_In progress._
+`Swift`
+
+  </td>
+    <td width="50%" valign="top">
+
+#### 🎨 [Portfolio](https://almerazisai.com)
+Personal site _(coming soon)_.
+`Web`
+
+  </td>
+  </tr>
+</table>
+
+---
 
 ### 📊 GitHub
 
 <div align="center">
 
-![Stats](https://github-readme-stats.vercel.app/api?username=Its-isaku&show_icons=true&hide_border=true&theme=transparent&count_private=true)
-![Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=Its-isaku&layout=compact&hide_border=true&theme=transparent&langs_count=6)
+<img height="165" src="https://github-readme-stats.vercel.app/api?username=Its-isaku&show_icons=true&count_private=true&hide_border=false&bg_color=0d1117&title_color=b3c63f&icon_color=b3c63f&text_color=c9d1d9&border_color=30363d" />
+<img height="165" src="https://github-readme-stats.vercel.app/api/top-langs/?username=Its-isaku&layout=compact&hide_border=false&bg_color=0d1117&title_color=b3c63f&text_color=c9d1d9&border_color=30363d" />
+
+<img src="https://github-readme-activity-graph.vercel.app/graph?username=Its-isaku&bg_color=0d1117&color=b3c63f&line=b3c63f&point=ffffff&area=true&hide_border=false&border_color=30363d&custom_title=Contribution%20activity" />
 
 </div>
 
