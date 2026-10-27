@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/header_ligth.svg" alt="Isai Almeraz — Software Engineer" width="100%">
+  <img src="./assets/header_dark.svg" alt="Isai Almeraz — Software Engineer" width="100%">
 </p>
 
 <p align="center">
