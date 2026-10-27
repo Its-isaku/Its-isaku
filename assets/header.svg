@@ -1,0 +1,325 @@
+"""Animated ASCII koi-pond header (SVG) for a GitHub profile README.
+
+GitHub strips scripts from README images, so everything here is declarative:
+- Each koi is rasterized into ASCII for F tail-beat frames (body undulation is a
+  travelling sine wave along the spine). Frames are swapped with discrete SMIL
+  opacity animations; the whole fish follows a path via <animateMotion rotate="auto">.
+- The name is a typeface rasterized into a density-ramp ASCII grid.
+- Rows use textLength so alignment holds regardless of the viewer's monospace font.
+"""
+import math
+import random
+from xml.sax.saxutils import escape
+from PIL import Image, ImageDraw, ImageFont
+
+W, H = 1280, 400
+BG = "#080d0c"
+MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace"
+NAME = "ISAI ALMERAZ"
+SUBTITLE = "SOFTWARE ENGINEER"
+NAME_FONT = "/usr/share/fonts/opentype/inter/InterDisplay-Black.otf"
+
+FRAMES = 8
+BEAT = 1.05  # seconds per tail-beat cycle
+
+PALETTE = {
+    "w": "#efe9dd",   # koi white
+    "r": "#e2552f",   # hi (red)
+    "g": "#e8a640",   # ogon gold
+    "e": "#141414",   # eye
+}
+
+
+# ---------------------------------------------------------------- noise
+def value_noise(seed):
+    rng = random.Random(seed)
+    table = [[rng.random() for _ in range(64)] for _ in range(64)]
+
+    def smooth(t):
+        return t * t * (3 - 2 * t)
+
+    def n(x, y):
+        xi, yi = int(math.floor(x)), int(math.floor(y))
+        xf, yf = smooth(x - xi), smooth(y - yi)
+        a = table[yi % 64][xi % 64]
+        b = table[yi % 64][(xi + 1) % 64]
+        c = table[(yi + 1) % 64][xi % 64]
+        d = table[(yi + 1) % 64][(xi + 1) % 64]
+        return (a * (1 - xf) + b * xf) * (1 - yf) + (c * (1 - xf) + d * xf) * yf
+
+    return n
+
+
+# ---------------------------------------------------------------- koi
+RAMP = ".:-=+*#%@"
+
+
+def koi_frames(length, kind, seed, cw):
+    """Return FRAMES lists of rows; each row is a list of (char, colorKey, isFin)."""
+    rh = cw * 2
+    wmax = 0.14 * length
+    amp = 0.085 * length
+    hf = 2 * (1.75 * wmax + amp)
+    cols, rows = int(length / cw), int(hf / rh)
+    noise = value_noise(seed)
+
+    def half_w(s):
+        # blunt rounded head, broad shoulders at ~25%, long taper to the peduncle
+        if s < 0.25:
+            return wmax * (1 - (1 - s / 0.25) ** 2.2) ** 0.5
+        if s <= 0.80:
+            return wmax * (0.16 + 0.84 * math.cos(math.pi / 2 * (s - 0.25) / 0.55) ** 1.3)
+        return 0.0
+
+    def in_ellipse(along, lat, cx, cy, a, b, ang):
+        dx, dy = along - cx, lat - cy
+        ca, sa = math.cos(ang), math.sin(ang)
+        u, v = dx * ca + dy * sa, -dx * sa + dy * ca
+        return (u / a) ** 2 + (v / b) ** 2 <= 1
+
+    def body_color(s, v):
+        if kind == "ogon":
+            return "g"
+        n = noise(s * 7.5, v * 1.6 + 3)
+        if kind == "tancho":
+            return "r" if (s < 0.16 and abs(v) < 0.7 and n > 0.25) else "w"
+        threshold = 0.55 if s > 0.12 else 0.35
+        return "r" if n > threshold else "w"
+
+    frames = []
+    for f in range(FRAMES):
+        t = f / FRAMES
+        flap = 1 + 0.22 * math.sin(2 * math.pi * t + 1.2)
+        grid = []
+        for r in range(rows):
+            y = -hf / 2 + (r + 0.5) * rh
+            row = []
+            for c in range(cols):
+                x = -length / 2 + (c + 0.5) * cw
+                s = (length / 2 - x) / length           # 0 = nose, 1 = tail tip
+                y0 = amp * s ** 1.7 * math.sin(2 * math.pi * (0.95 * s - t))
+                lat = y - y0
+                along = s * length
+                cell = (" ", None, False)
+
+                w = half_w(s)
+                if s <= 0.80 and abs(lat) <= w:
+                    v = lat / w
+                    dens = 1 - abs(v) ** 4
+                    ch = RAMP[max(2, min(len(RAMP) - 1, int(dens * len(RAMP))))]
+                    cell = (ch, body_color(s, v), False)
+                    # eyes
+                    ey = 0.62 * half_w(0.07)
+                    if abs(along - 0.07 * length) < cw * 0.75 and abs(abs(lat) - ey) < rh * 0.55:
+                        cell = ("o", "e", False)
+                else:
+                    fin = False
+                    # tail fin with a forked trailing edge
+                    if 0.76 <= s <= 1.0:
+                        half_t = wmax * (0.16 + ((s - 0.76) / 0.24) ** 0.8 * 1.7)
+                        notch = max(0.0, (s - 0.88) / 0.12) ** 1.5 * 0.9 * wmax
+                        fin = notch <= abs(lat) <= half_t
+                    # pectoral fins: trail backwards, flap with the beat
+                    if not fin and 0.12 < s < 0.50:
+                        cy = half_w(0.24) + 0.45 * wmax * flap
+                        fin = in_ellipse(along, abs(lat), 0.30 * length, cy,
+                                         0.10 * length, 0.55 * wmax * flap, 0.6)
+                    # pelvic fins
+                    if not fin and 0.45 < s < 0.62:
+                        cy = half_w(0.53) + 0.16 * wmax
+                        fin = in_ellipse(along, abs(lat), 0.53 * length, cy,
+                                         0.045 * length, 0.22 * wmax, 0.6)
+                    if fin:
+                        base = "g" if kind == "ogon" else "w"
+                        cell = ("+" if (r + c) % 3 == 0 else ":", base, True)
+                row.append(cell)
+            grid.append(row)
+        frames.append(grid)
+    return frames, cols, rows, rh
+
+
+def koi_svg(length, kind, seed, path, dur, begin, opacity, beat, cw=3.6):
+    frames, cols, rows, rh = koi_frames(length, kind, seed, cw)
+    x0 = -cols * cw / 2
+    y_top = -rows * rh / 2
+    font = rh * 1.05  # oversize glyphs so rows read as a solid mosaic, not stripes
+    out = [f'<g opacity="{opacity}">']
+    for i, grid in enumerate(frames):
+        vals = ";".join("1" if j == i else "0" for j in range(FRAMES))
+        keys = ";".join(f"{j / FRAMES:.4f}" for j in range(FRAMES))
+        out.append(f'<g opacity="{1 if i == 0 else 0}">'
+                   f'<animate attributeName="opacity" calcMode="discrete" dur="{beat}s" '
+                   f'repeatCount="indefinite" values="{vals}" keyTimes="{keys}"/>')
+        for r, row in enumerate(grid):
+            if all(ch == " " for ch, _, _ in row):
+                continue
+            # Group runs by color; blank cells join whatever run they sit in.
+            spans = []
+            for ch, col, fin in row:
+                key = None if col is None else col + ("f" if fin else "")
+                if spans and (key is None or spans[-1][0] == key):
+                    spans[-1][1] += ch
+                else:
+                    spans.append([key, ch])
+            body = "".join(
+                escape(txt) if k is None else f'<tspan class="k{k}">{escape(txt)}</tspan>'
+                for k, txt in spans
+            )
+            y = y_top + (r + 0.8) * rh
+            out.append(f'<text class="koi" x="{x0:.1f}" y="{y:.1f}" font-size="{font:.2f}" '
+                       f'textLength="{cols * cw:.1f}" lengthAdjust="spacing">{body}</text>')
+        out.append("</g>")
+    out.append(f'<animateMotion path="{path}" dur="{dur}s" begin="{begin}s" '
+               f'repeatCount="indefinite" rotate="auto"/>')
+    out.append("</g>")
+    return "".join(out)
+
+
+# ---------------------------------------------------------------- name
+def name_rows(cols, rows):
+    sx, sy = 6, 12
+    img = Image.new("L", (cols * sx, rows * sy), 0)
+    d = ImageDraw.Draw(img)
+    size = 400
+    font = ImageFont.truetype(NAME_FONT, size)
+    while True:
+        l, t, r, b = d.textbbox((0, 0), NAME, font=font)
+        if (r - l) <= img.width * 0.97 and (b - t) <= img.height * 0.86:
+            break
+        size -= 2
+        font = ImageFont.truetype(NAME_FONT, size)
+    l, t, r, b = d.textbbox((0, 0), NAME, font=font)
+    d.text(((img.width - (r - l)) / 2 - l, (img.height - (b - t)) / 2 - t), NAME, fill=255, font=font)
+    layers = {"low": [], "mid": [], "high": []}
+    for row in range(rows):
+        lines = {k: [" "] * cols for k in layers}
+        for col in range(cols):
+            box = img.crop((col * sx, row * sy, (col + 1) * sx, (row + 1) * sy))
+            v = sum(box.get_flattened_data()) / (255 * sx * sy)
+            if v < 0.05:
+                continue
+            ch = RAMP[min(len(RAMP) - 1, int(v * len(RAMP)))]
+            lines["low" if v < 0.35 else "mid" if v < 0.75 else "high"][col] = ch
+        for k in layers:
+            layers[k].append("".join(lines[k]))
+    return layers
+
+
+def name_svg():
+    cols, rows = 180, 13
+    x0, x1 = 170, W - 170
+    cw = (x1 - x0) / cols
+    rh = cw * 2
+    y_top = H / 2 - rows * rh / 2 - 18
+    out = []
+    for k, lines in name_rows(cols, rows).items():
+        for r, text in enumerate(lines):
+            if not text.strip():
+                continue
+            y = y_top + (r + 0.8) * rh
+            out.append(f'<text class="nm {k}" x="{x0}" y="{y:.1f}" textLength="{x1 - x0:.1f}" '
+                       f'lengthAdjust="spacing" font-size="{cw / 0.6:.2f}" '
+                       f'style="animation-delay:{200 + r * 60}ms">{escape(text)}</text>')
+    sub_y = y_top + rows * rh + 30
+    out.append(f'<text class="sub" x="{W / 2}" y="{sub_y:.1f}" text-anchor="middle">{SUBTITLE}</text>')
+    return "".join(out)
+
+
+# ---------------------------------------------------------------- pond extras
+def dust():
+    rng = random.Random(4)
+    pts = []
+    for _ in range(140):
+        x, y = rng.uniform(0, W), rng.uniform(0, H)
+        pts.append(f'<text x="{x:.0f}" y="{y:.0f}">{rng.choice(".·.:")}</text>')
+    return ('<g class="dust">' + "".join(pts) +
+            '<animateTransform attributeName="transform" type="translate" '
+            'values="0 0; 18 6; 0 0" dur="24s" repeatCount="indefinite"/></g>')
+
+
+def ripples():
+    spots = [(260, 300, 0), (1010, 110, 2.6), (760, 330, 5.1), (430, 70, 7.4)]
+    out = []
+    for x, y, b in spots:
+        for k in range(2):
+            out.append(
+                f'<circle cx="{x}" cy="{y}" r="0" class="rip">'
+                f'<animate attributeName="r" values="0;70" dur="5.5s" begin="{b + k * 0.7}s" repeatCount="indefinite"/>'
+                f'<animate attributeName="opacity" values=".45;0" dur="5.5s" begin="{b + k * 0.7}s" repeatCount="indefinite"/>'
+                f'</circle>')
+    return "".join(out)
+
+
+def svg():
+    fish = [
+        # length, kind, seed, path, dur, begin, opacity, beat
+        (200, "kohaku", 11,
+         "M 400 -60 C 700 -100 1100 0 1000 150 C 900 300 500 280 350 200 "
+         "C 200 120 150 -30 400 -60 Z", 38, -6, 0.45, 0.9),
+        (360, "kohaku", 3,
+         "M 100 330 C 400 420 900 380 1150 260 C 1400 140 1250 -20 950 40 "
+         "C 650 100 350 20 150 90 C -80 170 -150 260 100 330 Z", 52, -4, 1, 1.35),
+        (280, "ogon", 8,
+         "M 1200 120 C 1000 -30 400 -40 200 110 C 0 260 300 440 700 380 "
+         "C 1100 320 1400 270 1200 120 Z", 46, -20, 0.95, 1.15),
+        (260, "tancho", 21,
+         "M -150 200 C 200 60 500 300 800 170 C 1100 40 1300 230 1450 200 "
+         "C 1700 150 1600 420 1200 430 C 700 440 300 480 -50 400 "
+         "C -350 330 -400 280 -150 200 Z", 58, -31, 0.85, 1.1),
+    ]
+    koi = "".join(koi_svg(*f) for f in fish)
+    css = "".join(f".k{k}{{fill:{v}}}.k{k}f{{fill:{v};opacity:.75}}" for k, v in PALETTE.items())
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-label="Isai Almeraz — Software Engineer" xml:space="preserve">
+<title>Isai Almeraz — Software Engineer</title>
+<defs>
+  <radialGradient id="vig" cx="50%" cy="45%" r="75%">
+    <stop offset="50%" stop-color="#000" stop-opacity="0"/>
+    <stop offset="100%" stop-color="#000" stop-opacity=".8"/>
+  </radialGradient>
+  <radialGradient id="pool" cx="50%" cy="45%" r="45%">
+    <stop offset="0" stop-color="#000" stop-opacity=".35"/>
+    <stop offset="1" stop-color="#000" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="grain" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" stitchTiles="stitch"/>
+    <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0"/>
+  </filter>
+  <radialGradient id="plate"><stop offset=".55" stop-color="{BG}" stop-opacity=".7"/><stop offset="1" stop-color="{BG}" stop-opacity="0"/></radialGradient>
+  <clipPath id="card"><rect width="{W}" height="{H}" rx="16"/></clipPath>
+</defs>
+<style>
+  text {{ font-family: {MONO}; white-space: pre; }}
+  .koi {{ }}
+  {css}
+  .dust text {{ font-size: 9px; fill: #5d6b66; opacity: .35; }}
+  .rip {{ fill: none; stroke: #9fb3ab; stroke-width: 1; stroke-dasharray: 1 6; }}
+  .nm {{ stroke: {BG}; stroke-width: 2.6px; paint-order: stroke; stroke-linejoin: round; animation: flick 1.2s ease-out both; }}
+  .low  {{ fill: #c9c7bf; fill-opacity: .55; }}
+  .mid  {{ fill: #e6e3da; fill-opacity: .85; }}
+  .high {{ fill: #f6f3ec; }}
+  .sub {{ font-size: 13px; letter-spacing: 7px; fill: #9aa59f; stroke: {BG}; stroke-width: 4px; paint-order: stroke; animation: fade 1.4s ease-out 1.4s both; }}
+  @keyframes flick {{ 0% {{opacity:0}} 18% {{opacity:.55}} 28% {{opacity:.08}} 50% {{opacity:.9}} 64% {{opacity:.35}} 100% {{opacity:1}} }}
+  @keyframes fade {{ from {{opacity:0}} to {{opacity:1}} }}
+  @media (prefers-reduced-motion: reduce) {{ .nm, .sub {{ animation: none; }} }}
+</style>
+<g clip-path="url(#card)">
+  <rect width="{W}" height="{H}" fill="{BG}"/>
+  {dust()}
+  {ripples()}
+  {koi}
+  <rect width="{W}" height="{H}" fill="url(#pool)"/>
+  <ellipse cx="{W/2}" cy="{H/2-12}" rx="560" ry="120" fill="url(#plate)"/>
+  {name_svg()}
+  <rect width="{W}" height="{H}" fill="url(#vig)"/>
+  <rect width="{W}" height="{H}" filter="url(#grain)" opacity=".06"/>
+</g>
+</svg>'''
+
+
+if __name__ == "__main__":
+    import sys
+    out = sys.argv[1] if len(sys.argv) > 1 else "header.svg"
+    data = svg()
+    with open(out, "w", encoding="utf-8") as f:
+        f.write(data)
+    print("wrote", out, f"{len(data) / 1024:.0f} KB")
